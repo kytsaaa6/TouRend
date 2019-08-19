@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 는 필수 속성이다. : dao 식별하기위한 이름 -->
+<mapper namespace="com.kym.tr.member.dao.MemberSessionDao">
+	
+	<!-- select 결과 메핑을 위한 resultMap 설정 -->
+<!-- 	
+	<resultMap id="resultMemberInfo"
+		type="com.bitcamp.mm.member.domain.MemberInfo">
+		<id property="idx" column="idx" />
+		<result property="uId" column="uId" />
+		<result property="uPW" column="uPw" />
+		<result property="uName" column="uName" />
+		<result property="uPhoto" column="uPhoto" />
+		<result property="regDate" column="regDate" />
+	</resultMap> -->
+
+	<!-- 
+	하나의 데이터를 받아올 경우 변수명은 상관없음
+	두개이상의 데이터를 받아올 경우 변수명은 #{param1}, #{param2} 으로 지정
+	Map에 저장된 데이터를 받아올 경우 변수명은 key 이름으로 지정
+	 -->
+
+	<!-- 회원로그인 -->
+	<select id="selectMemberById" resultType="com.kym.tr.member.domain.MemberInfo">
+		select * from member
+		where uid=#{id}
+	</select>
+
+	<!-- 아이디 중복체크 -->
+	<select id="selectMemberById2" resultType="com.kym.tr.member.domain.MemberInfo">
+		select * from member
+		where uid=#{id}
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="insertMember"
+		parameterType="com.kym.tr.member.domain.MemberInfo">
+		insert into member (uid, uname, upw, uphoto) values
+		(#{uId},#{uName},#{uPw},#{uPhoto})
+	</insert>
+
+	<!-- 회원 정보 수정을 위한 정보 획득 -->
+	<select id="selectMemberByIdx" resultType="com.kym.tr.member.domain.MemberInfo">
+		select * from member
+		where idx=#{idx}
+	</select>
+
+	<!-- 회원정보수정 -->
+	<update id="memberUpdate"
+		parameterType="com.kym.tr.member.domain.MemberInfo">
+		update member set uname=#{uName}, upw=#{uPw},
+		uphoto=#{uPhoto} where idx=#{idx}
+	</update>
+
+	<!-- 회원정보 삭제 -->
+	<delete id="memberDelete">
+		delete from member where idx=#{idx}
+	</delete>
+
+	<!-- 회원 리스트의 개수 : 검색을 위해 동적쿼리 적용 -->
+	<select id="selectTotalCount"
+		parameterType="com.kym.tr.member.domain.MemberInfo"
+		resultType="int">
+		select count(*) from member
+
+		<where>
+
+			<if test="stype != null">
+				<if test="stype == 'both'">
+					uid LIKE CONCAT('%', #{keyword}, '%') or uname LIKE
+					CONCAT('%', #{keyword}, '%')
+				</if>
+				<if test="stype == 'id'">
+					uid LIKE CONCAT('%', #{keyword}, '%')
+				</if>
+				<if test="stype == 'name'">
+					uname LIKE CONCAT('%', #{keyword}, '%')
+				</if>
+
+			</if>
+
+
+		</where>
+
+	</select>
+
+
+	<!-- 회원 리스트 : 검색을 위해 동적쿼리 적용 -->
+	<select id="selectList" parameterType="map"
+		resultType="com.kym.tr.member.domain.MemberInfo">
+		SELECT * FROM member
+		<where>
+			<if test="search != null">
+				<if test="search.stype == 'both'">
+					<include refid="whereId"/>
+					<include refid="whereName"/>
+					<!-- uid LIKE CONCAT('%', #{search.keyword}, '%') or uname LIKE CONCAT('%', #{search.keyword}, '%') -->
+				</if>
+				<if test="search.stype == 'id'">				
+					<include refid="whereId"/>
+					<!-- uid LIKE CONCAT('%', #{search.keyword}, '%') -->
+				</if>
+				<if test="search.stype == 'name'">
+					<include refid="whereName"/>
+					<!-- uname LIKE CONCAT('%', #{search.keyword}, '%') -->
+				</if>
+			</if>
+		</where>
+		<!-- limit #{param1}, #{param2} -->
+		limit #{index}, #{count}
+	</select>
+		
+	<sql id="whereId">
+		or uid LIKE CONCAT('%', #{search.keyword}, '%')
+	</sql>
+		
+	<sql id="whereName">
+		or uid LIKE CONCAT('%', #{search.keyword}, '%')
+	</sql>
+	
+
+
+	<!-- Rest 로 구현 -->
+	<!-- 전체 회원 리스트 구하기 -->
+	<select id="selectAllList" resultType="com.kym.tr.member.domain.MemberInfo">
+		select * from member order by uname
+	</select>
+
+
+
+</mapper>
