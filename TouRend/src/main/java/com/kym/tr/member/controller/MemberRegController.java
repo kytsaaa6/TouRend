@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.kym.tr.member.domain.RequestMemberRegist;
+import com.kym.tr.member.service.MailSenderService;
 import com.kym.tr.member.service.MemberRegService;
 
 
@@ -20,6 +21,9 @@ public class MemberRegController {
 	
 	@Autowired
 	private MemberRegService registService;
+	
+	@Autowired
+	private MailSenderService mailService;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getForm( ) {

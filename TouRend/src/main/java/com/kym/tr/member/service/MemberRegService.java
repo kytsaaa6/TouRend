@@ -32,6 +32,9 @@ public class MemberRegService implements MemberService {
 	@Inject
 	private SqlSessionTemplate template;
 	
+	@Autowired
+	private MailSenderService mailService;
+	
 	public int memberInsert(
 			HttpServletRequest request, 
 			RequestMemberRegist regist) {
@@ -62,6 +65,9 @@ public class MemberRegService implements MemberService {
 			
 			}
 			resultCnt = dao.insertMember(memberInfo);
+			
+			// 메일 발송
+			mailService.send(memberInfo.getuId());
 			
 			
 		} catch (IllegalStateException e) {
