@@ -39,8 +39,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 회원가입 -->
 	<insert id="insertMember"
 		parameterType="com.kym.tr.member.domain.MemberInfo">
-		insert into member (uid, uname, upw, uphoto) values
-		(#{uId},#{uName},#{uPw},#{uPhoto})
+		insert into member (uid, uname, upw, uphoto, code) values
+		(#{uId},#{uName},#{uPw},#{uPhoto},#{code})
 	</insert>
 
 	<!-- 회원 정보 수정을 위한 정보 획득 -->
@@ -123,12 +123,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</sql>
 	
 
-
 	<!-- Rest 로 구현 -->
 	<!-- 전체 회원 리스트 구하기 -->
 	<select id="selectAllList" resultType="com.kym.tr.member.domain.MemberInfo">
 		select * from member order by uname
 	</select>
+
+
+	<update id="verify">
+		update member set verify='Y'
+		where uid=#{param1} and code=#{param2}
+	</update>
 
 
 
